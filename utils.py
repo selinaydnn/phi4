@@ -41,7 +41,7 @@ def add_pdf_to_chroma_db(pdf_path, chroma_db, chunk_size=512, chunk_overlap=50, 
 def create_embeddings():
     return OllamaEmbeddings(model="bge-m3:latest")
 
-CHROMA_DB_PATH = "/home/selinaydin042/phi4/chroma_index"
+CHROMA_DB_PATH = "/home/zeynepmiraaydin1978/phi4/chroma_index"
 
 def load_chroma_db():
     embedding_model = OllamaEmbeddings(model="bge-m3:latest")
@@ -136,7 +136,7 @@ def generate_response_with_context(query, qa, chroma_db):
 
 
 if __name__ == "__main__":
-    source_dir = "/home/selinaydin042/phi4/source_doc"
+    source_dir = "/home/zeynepmiraaydin1978/phi4/source_doc"
     chroma_db = load_chroma_db()
 
 
