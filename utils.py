@@ -63,7 +63,7 @@ test_chroma_db()
 
 def load_llm():
     return ChatOllama(
-        model="phi3:latest",
+        model="phi4-mini",
         temperature=0.4,
         max_tokens=524
     )
