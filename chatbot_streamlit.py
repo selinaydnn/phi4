@@ -3,7 +3,6 @@ import pysqlite3
 
 sys.modules["sqlite3"] = pysqlite3
 
-
 import streamlit as st
 from utils import load_chroma_db, load_llm, create_qa_chain, create_prompt_template
 
