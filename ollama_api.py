@@ -17,7 +17,7 @@ def chat_reponse(input_message):
     """
     user_message_info += 'benim bu soru ile ilgili buldugum chunk listesi {mesaj}'
 
-    response: ChatResponse = chat(model='phi4-mini', messages=[
+    response: ChatResponse = chat(model='phi4', messages=[
         {
             'role': 'user',
             'content': f"{user_message_info}",
