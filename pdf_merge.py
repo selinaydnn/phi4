@@ -1,6 +1,5 @@
 import fitz
 
-
 def merge_pdfs(pdf_list, output_pdf):
     merged_pdf = fitz.open()
 

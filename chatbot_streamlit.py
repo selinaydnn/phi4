@@ -1,8 +1,6 @@
-
-
 import streamlit as st
 from utils import load_chroma_db, load_llm, create_qa_chain, create_prompt_template
-
+from utils import generate_response_with_context
 
 chroma_db = load_chroma_db()
 llm = load_llm()
@@ -11,7 +9,6 @@ qa = create_qa_chain(chroma_db, llm, PROMPT)
 
 
 st.title("Acıbadem Üniversitesi Asistanı")
-st.write("https://www.youtube.com/watch?v=N2Xx_P0a9lo")
 
 
 if "chat_history" not in st.session_state:
@@ -25,20 +22,15 @@ answer = None
 if st.button("Yanıt Al"):
     if query:
         try:
+            result = generate_response_with_context(query, qa, chroma_db)
+            answer = result["response"]
+            sources = result["source_documents"]
 
-            retriever = chroma_db.as_retriever(search_type="mmr", search_kwargs={"k": 5})
-            relevant_docs = retriever.invoke(query)
-
-
-
-            context = " ".join([doc.page_content for doc in relevant_docs])
-
-
-            response = qa.invoke({"context": context, "query": query})
-            answer = response.get("result", "Yanıt bulunamadı.")
-
-
-            st.session_state.chat_history.insert(0, {"question": query, "answer": answer})
+            st.session_state.chat_history.insert(0, {
+                "question": query,
+                "answer": answer,
+                "sources": sources
+            })
 
         except Exception as e:
             st.error(f"Bir hata oluştu: {e}")
@@ -46,14 +38,21 @@ if st.button("Yanıt Al"):
     else:
         st.warning("Lütfen bir soru yazın!")
 
-#
 if answer:
     st.subheader("Yanıt:")
     st.write(answer)
+    st.markdown("**Kaynak PDF(ler):**")
+    for doc in sources:
+        st.markdown(f"- `{doc['source']}`")
+
 
 
 st.subheader("Sohbet Geçmişi")
 for chat in st.session_state.chat_history:
     st.write(f"**Soru:** {chat['question']}")
     st.write(f"**Yanıt:** {chat['answer']}")
+    if "sources" in chat:
+        st.markdown("**Kaynak PDF(ler):**")
+        for doc in chat["sources"]:
+            st.markdown(f"- {doc['source']}")
     st.write("---")

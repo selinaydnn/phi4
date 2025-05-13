@@ -29,10 +29,11 @@ def add_pdf_to_chroma_db(pdf_path, chroma_db, chunk_size=512, chunk_overlap=50, 
     print(f"{pdf_path} içinden {len(chunks)} adet parça üretildi!")
 
     if len(chunks) > 0:
-        # Parçaları küçük batch'lere ayır
+
         for i in range(0, len(chunks), max_batch_size):
             batch = chunks[i:i + max_batch_size]
-            chroma_db.add_texts(batch)
+            metadatas = [{"source": os.path.basename(pdf_path)} for _ in batch]
+            chroma_db.add_texts(batch, metadatas=metadatas)
             print(f"{len(batch)} chunk başarıyla ChromaDB'ye eklendi.")
 
         print(f"Güncellenmiş ChromaDB veri sayısı: {chroma_db._collection.count()}")
@@ -130,7 +131,14 @@ def generate_response_with_context(query, qa, chroma_db):
     return {
         "response": response.get("result", "Yanıt bulunamadı."),
         "context_used": context,
-        "source_documents": [doc.page_content for doc in relevant_docs]
+        "source_documents": [
+    {
+        "content": doc.page_content,
+        "source": doc.metadata.get("source", "Bilinmiyor"),
+    }
+    for doc in relevant_docs
+]
+
     }
 
 
@@ -147,13 +155,3 @@ if __name__ == "__main__":
         add_pdf_to_chroma_db(pdf_path, chroma_db)
 
     print("Tüm PDF'ler başarıyla eklendi ve ChromaDB güncellendi!")
-
-
-
-
-
-
-
-
-
-
